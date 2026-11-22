@@ -21,7 +21,8 @@
 
   // ---- 制限モード（Restricted Mode）----
   // 信頼していないフォルダでは制限モードのまま使う（AI 出力を開く用途なので保護は残す）。
-  // 上部の案内バナーだけ出さない。
+  // Markdown Preview Enhanced は制限モードでは動かないので、自分のフォルダは
+  // マシンごとに「信頼済み」に登録する（手順は README）。上部の案内バナーだけ出さない。
   "security.workspace.trust.banner": "never",
 
   // ---- 日本語文書で出る Unicode ハイライトを止める ----
@@ -34,6 +35,9 @@
 
   // ---- Markdown ----
   "markdown-preview-enhanced.previewTheme": "github-light.css",
-  // .md を開いたら Markdown Preview Enhanced のプレビューを横に自動で開く
-  "markdown-preview-enhanced.automaticallyShowPreviewOfMarkdownBeingEdited": true
+  // .md はソースを出さず、Markdown Preview Enhanced のプレビューだけで開く
+  // （ソースを見るときは「Reopen Editor With...」→「Text Editor」）
+  "workbench.editorAssociations": {
+    "*.md": "markdown-preview-enhanced"
+  }
 }

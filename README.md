@@ -95,10 +95,27 @@ cd vscode-config
 code-viewer plan.md
 ```
 
-- `Ctrl+K V` … 標準プレビューを横に表示
-- 右クリック →「Markdown Preview Enhanced: Open Preview to the Side」… Mermaid・数式込みのプレビュー
-
+`.md` はソースを出さず、Markdown Preview Enhanced のプレビュー（Mermaid・数式・画像込み）だけで開く。
 ファイルが外部（AI など）で更新されるとプレビューも追従する。
+
+- ソースを見たいとき … コマンドパレット（`Ctrl+Shift+P`）→「View: Reopen Editor With...」→「Text Editor」
+
+#### 初回のみ: 自分のフォルダを「信頼済み」に登録する（マシンごと）
+
+Markdown Preview Enhanced は VS Code の制限モード（Restricted Mode）では動かない。
+信頼していないフォルダのファイルは制限モードで開かれ、**プレビューが表示されない**
+（viewer では案内バナーを消しているので、見た目では分からない）。
+
+自分のリポジトリを置いている親フォルダを一度だけ登録しておく。配下のフォルダもすべて信頼済みになる。
+
+1. `code-viewer` を起動する（ファイルは開かなくてよい）
+2. コマンドパレット（`Ctrl+Shift+P`）→「Workspaces: Manage Workspace Trust」
+3. 「Trusted Folders & Workspaces」の「Add Folder」で `~/projects` などを追加する
+
+- 登録内容は設定ファイルではなく VS Code の内部状態（`<BASE>/viewer/data/` 以下）に保存されるため、Git では管理できない。
+  マシンごとに 1 回行う。`uninstall.sh --purge` で消える。
+- 用途ごとにデータディレクトリが分かれているので、viewer で登録しても他の用途や普通の `code` には影響しない。
+- 出どころの分からない md（ダウンロードしたものなど）は、登録したフォルダの外に置けば制限モードのまま開ける（プレビューは出ないので、ソースで見る）。
 
 ## アンインストール
 
