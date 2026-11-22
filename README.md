@@ -46,13 +46,20 @@ winget install Microsoft.VisualStudioCode
 
 **Ubuntu**
 
-公式サイトから `.deb` をダウンロードして:
+公式の最新版 `.deb`（x64）をダウンロードしてインストールする:
 
 ```bash
-sudo apt install ./code_*.deb
+# インストール時の「Microsoft の apt リポジトリを追加するか」の確認に、あらかじめ yes と答えておく
+echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
+
+curl -fL -o /tmp/code.deb "https://go.microsoft.com/fwlink/?LinkID=760868"
+sudo apt install /tmp/code.deb
+rm /tmp/code.deb
 ```
 
 Microsoft の apt リポジトリが追加され、以後は `apt upgrade` で更新される。
+
+Arm64 の場合は URL を `https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-arm64` にする。
 
 ### 2. このリポジトリを適用
 
