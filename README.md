@@ -122,6 +122,7 @@ cp -r profiles/viewer profiles/<name>
 
 - OS ごとの条件分岐は書けない。`terminal.integrated.profiles.linux` / `.windows` のように、キー名で OS を分けている設定は同居できる。
 - 本体と拡張の更新は自動にしていないので、気が向いたときに apt / winget と拡張ビューから更新する。
+  Markdown Preview Enhanced には Markdown の内容から突ける脆弱性が報告されたことがあるので、拡張は定期的に更新する。
 
 ## 未対応
 

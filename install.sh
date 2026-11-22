@@ -16,6 +16,7 @@ case "$(uname)" in
   *)      BASE="${XDG_DATA_HOME:-$HOME/.local/share}/vscode-profiles" ;;
 esac
 BIN="$HOME/.local/bin"
+FAILED=""
 
 if [ $# -eq 0 ]; then
   set -- $(ls "$SRC/profiles")
@@ -44,17 +45,25 @@ for name in "$@"; do
     echo "link:   $USER_DIR/$f"
   done
 
-  if [ -f "$P/extensions.txt" ]; then
-    grep -Ev '^[[:space:]]*(#|$)' "$P/extensions.txt" | while read -r ext; do
-      code --user-data-dir "$BASE/$name/data" --extensions-dir "$EXT_DIR" --install-extension "$ext"
-    done
-  fi
-
   ln -sfn "$SRC/bin/code-profile" "$BIN/code-$name"
   echo "launcher: $BIN/code-$name"
+
+  # 拡張のインストール失敗で全体を止めない（失敗は最後にまとめて報告）
+  if [ -f "$P/extensions.txt" ]; then
+    for ext in $(grep -Ev '^[[:space:]]*(#|$)' "$P/extensions.txt"); do
+      if ! code --user-data-dir "$BASE/$name/data" --extensions-dir "$EXT_DIR" --install-extension "$ext"; then
+        FAILED="$FAILED $name:$ext"
+      fi
+    done
+  fi
 done
 
 case ":$PATH:" in
   *":$BIN:"*) ;;
-  *) echo "note: $BIN is not in PATH" ;;
+  *) echo "note: $BIN is not in PATH (再ログインするか、PATH に追加する)" ;;
 esac
+
+if [ -n "$FAILED" ]; then
+  echo "failed extensions:$FAILED" >&2
+  exit 1
+fi
