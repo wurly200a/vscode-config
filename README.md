@@ -100,6 +100,21 @@ code-viewer plan.md
 
 ファイルが外部（AI など）で更新されるとプレビューも追従する。
 
+## アンインストール
+
+```bash
+./uninstall.sh                  # インストール済みの全用途
+./uninstall.sh viewer           # 指定した用途だけ
+./uninstall.sh --purge viewer   # データディレクトリ（拡張・ウィンドウ状態など）ごと削除
+```
+
+Windows は `.\uninstall.ps1` / `.\uninstall.ps1 viewer` / `.\uninstall.ps1 -Purge viewer`。
+
+- 既定では、設定のシンボリックリンクとランチャだけを外し、データディレクトリは残す（再インストールすると元の状態に戻る）。
+- install で `*.bak` に退避した設定ファイルがあれば元に戻す。
+- ランチャが 1 つも残らなければ `code-profile`（Windows はランチャのディレクトリとユーザー PATH の登録）も外す。
+- このリポジトリ（`profiles/` 以下）には触らない。
+
 ## 用途を追加する
 
 ```bash
