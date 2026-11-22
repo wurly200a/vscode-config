@@ -111,6 +111,8 @@ Markdown Preview Enhanced は VS Code の制限モード（Restricted Mode）で
 1. `code-viewer` を起動する（ファイルは開かなくてよい）
 2. コマンドパレット（`Ctrl+Shift+P`）→「Workspaces: Manage Workspace Trust」
 3. 「Trusted Folders & Workspaces」の「Add Folder」で `~/projects` などを追加する
+   - Ubuntu（GTK）のダイアログでは、一覧でフォルダを選んで「Open」を押すと中に移動してしまうことがある。
+     **追加したいフォルダの中に入り、何も選択せずに「Open」**を押すか、`Ctrl+L` でパス（`~/projects/`）を入力して「Open」を押す
 
 - 登録内容は設定ファイルではなく VS Code の内部状態（`<BASE>/viewer/data/` 以下）に保存されるため、Git では管理できない。
   マシンごとに 1 回行う。`uninstall.sh --purge` で消える。
