@@ -17,7 +17,7 @@
   "window.commandCenter": false,
   "editor.minimap.enabled": false,
   "breadcrumbs.enabled": false,
-  "window.menuBarVisibility": "toggle", // メニューバーは Alt で出す
+  "window.menuBarVisibility": "classic", // メニューバーは常に表示（ファイルはメニューから開く）
 
   // ---- 制限モード（Restricted Mode）----
   // 信頼していないフォルダでは制限モードのまま使う（AI 出力を開く用途なので保護は残す）。
