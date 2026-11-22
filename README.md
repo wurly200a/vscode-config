@@ -2,27 +2,37 @@
 
 VS Code の設定を Git で管理し、どのマシンでも同じ環境にするためのリポジトリ。
 
-メインエディタは Emacs のまま、VS Code は主に **Markdown の閲覧（Mermaid・数式・画像込み）** に使う。
-そのため設定の方針は「静かにする」こと。更新通知・Tips・Welcome・AI 系 UI などは出さない。
+メインエディタは Emacs のまま、VS Code は**用途ごとに分けた専用環境**として使う。
+各用途の方針は「その用途に要るものだけ出す」。更新通知・Tips・Welcome・AI 系 UI などは出さない。
 
-## 構成
+| 用途 | ランチャ | 内容 |
+| --- | --- | --- |
+| `viewer` | `code-viewer` | Markdown 閲覧（Mermaid・数式・画像込み） |
 
-| ファイル | 内容 |
-| --- | --- |
-| `settings.json` | 設定本体（コメント付き JSONC） |
-| `keybindings.json` | キーバインド |
-| `extensions.txt` | インストールする拡張の一覧 |
-| `install.sh` | Linux / macOS 用セットアップ |
-| `install.ps1` | Windows 用セットアップ |
+## 仕組み
 
-`settings.json` と `keybindings.json` は VS Code のユーザー設定ディレクトリへシンボリックリンクされる。
-既存の実ファイルがあれば `*.bak` に退避してからリンクする。
+用途ごとに `--user-data-dir` と `--extensions-dir` を分けて起動する（Emacs の `--init-directory` と同じ発想）。
+設定・拡張・ウィンドウ状態は用途間で干渉せず、普通の `code` にも影響しない。
 
-| OS | リンク先 |
-| --- | --- |
-| Linux | `~/.config/Code/User/` |
-| macOS | `~/Library/Application Support/Code/User/` |
-| Windows | `%APPDATA%\Code\User\` |
+VS Code 標準の「プロファイル」機能は、設定ファイルがランダムな ID のディレクトリに置かれてシンボリックリンクで管理しにくいため使わない。
+
+```
+profiles/<name>/          ← このリポジトリ（Git 管理）
+  settings.json
+  keybindings.json        （任意）
+  extensions.txt          （任意）
+
+<BASE>/<name>/            ← 各マシンのデータ（Git 管理外）
+  data/User/settings.json     → profiles/<name>/settings.json へのリンク
+  data/User/keybindings.json  → profiles/<name>/keybindings.json へのリンク
+  extensions/                 用途専用の拡張
+```
+
+| OS | `<BASE>` | ランチャの置き場所 |
+| --- | --- | --- |
+| Linux | `~/.local/share/vscode-profiles` | `~/.local/bin/code-<name>` |
+| macOS | `~/Library/Application Support/vscode-profiles` | `~/.local/bin/code-<name>` |
+| Windows | `%LOCALAPPDATA%\vscode-profiles` | `%LOCALAPPDATA%\vscode-profiles\bin\code-<name>.cmd` |
 
 ## セットアップ
 
@@ -51,23 +61,31 @@ Microsoft の apt リポジトリが追加され、以後は `apt upgrade` で�
 ```bash
 git clone git@github.com:wurly200a/vscode-config.git
 cd vscode-config
-./install.sh
+./install.sh            # 全用途
+./install.sh viewer     # 用途を指定する場合
 ```
+
+`~/.local/bin` が PATH に入っていなければ追加する。
 
 **Windows**（開発者モードを有効にするか、管理者 PowerShell で）
 
 ```powershell
 git clone git@github.com:wurly200a/vscode-config.git
 cd vscode-config
-.\install.ps1
+.\install.ps1           # 全用途
+.\install.ps1 viewer    # 用途を指定する場合
 ```
 
-Windows では `ms-vscode-remote.remote-wsl` も追加でインストールされ、WSL のシェルから `code foo.md` で開ける。
+ランチャのディレクトリはユーザー PATH に自動で追加される（新しいシェルから有効）。
 
-## 使い方（Markdown 閲覧）
+既存の設定ファイルが実ファイルとしてあれば `*.bak` に退避してからリンクする。何度実行してもよい。
+
+## 使い方
+
+### viewer（Markdown 閲覧）
 
 ```bash
-code plan.md
+code-viewer plan.md
 ```
 
 - `Ctrl+K V` … 標準プレビューを横に表示
@@ -75,16 +93,29 @@ code plan.md
 
 ファイルが外部（AI など）で更新されるとプレビューも追従する。
 
+## 用途を追加する
+
+```bash
+cp -r profiles/viewer profiles/<name>
+# settings.json / extensions.txt を用途に合わせて編集
+./install.sh <name>
+```
+
+用途間で設定の継承はない。共通にしたい項目（更新通知オフなど）は各 `settings.json` に書く。
+
 ## 運用メモ
 
-- **組み込みの Settings Sync は有効にしない。** Git 管理と二重になり競合する。
+- **Settings Sync は有効にしない。** Git 管理と二重になり競合する。
 - GUI で設定を変えると、リンク経由でこのリポジトリのファイルが書き換わる。`git diff` で確認して commit する。
 - 拡張を追加したら一覧を更新して commit:
 
   ```bash
-  code --list-extensions > extensions.txt
+  code-viewer --list-extensions > profiles/viewer/extensions.txt
   ```
 
-  （Windows 専用の `ms-vscode-remote.remote-wsl` は `install.ps1` 側で入れるので、一覧からは外しておく）
 - OS ごとの条件分岐は書けない。`terminal.integrated.profiles.linux` / `.windows` のように、キー名で OS を分けている設定は同居できる。
 - 本体と拡張の更新は自動にしていないので、気が向いたときに apt / winget と拡張ビューから更新する。
+
+## 未対応
+
+- WSL 内のファイルを Windows 側の `code-<name>` で開く連携（Remote - WSL と専用データディレクトリの組み合わせ）は未整備。

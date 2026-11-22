@@ -1,4 +1,4 @@
-// VS Code 設定（Emacs 併用・Markdown 閲覧用途）
+// viewer: Markdown 閲覧用（Mermaid・数式・画像込み）
 // 方針: 頼んでいないものは出さない。更新は自分のタイミングで。
 {
   // ---- 更新・通知 ----
@@ -8,6 +8,7 @@
   "extensions.autoUpdate": false,       // 拡張を勝手に更新しない
   "workbench.tips.enabled": false,      // Tips を出さない
   "workbench.startupEditor": "none",    // Welcome ページを出さない
+  "window.restoreWindows": "none",      // 前回のウィンドウを復元しない（開いたファイルだけ表示）
 
   // ---- 画面の飾りを消す ----
   "workbench.activityBar.location": "hidden",

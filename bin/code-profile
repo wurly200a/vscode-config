@@ -1,0 +1,29 @@
+#!/bin/sh
+# 用途別に分離した VS Code を起動するランチャ（Linux / macOS）
+#
+#   code-profile <name> [code の引数...]
+#   code-<name>  [code の引数...]     # install.sh が作るシンボリックリンク経由
+#
+# 用途ごとに --user-data-dir / --extensions-dir を分けるので、
+# 設定・拡張・ウィンドウ状態は互いに干渉しない。
+set -e
+
+name=$(basename "$0")
+name=${name#code-}
+if [ "$name" = "profile" ]; then
+  [ $# -ge 1 ] || { echo "usage: code-profile <name> [args...]" >&2; exit 2; }
+  name=$1
+  shift
+fi
+
+case "$(uname)" in
+  Darwin) base="$HOME/Library/Application Support/vscode-profiles" ;;
+  *)      base="${XDG_DATA_HOME:-$HOME/.local/share}/vscode-profiles" ;;
+esac
+
+if [ ! -d "$base/$name" ]; then
+  echo "profile '$name' is not installed (run install.sh $name)" >&2
+  exit 1
+fi
+
+exec code --user-data-dir "$base/$name/data" --extensions-dir "$base/$name/extensions" "$@"
