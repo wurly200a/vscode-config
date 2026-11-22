@@ -1,0 +1,25 @@
+// VS Code 設定（Emacs 併用・Markdown 閲覧用途）
+// 方針: 頼んでいないものは出さない。更新は自分のタイミングで。
+{
+  // ---- 更新・通知 ----
+  "update.mode": "manual",              // 本体の自動更新をしない（apt / winget で更新）
+  "update.showReleaseNotes": false,     // 更新後のリリースノートを開かない
+  "extensions.autoCheckUpdates": false, // 拡張の更新確認をしない
+  "extensions.autoUpdate": false,       // 拡張を勝手に更新しない
+  "workbench.tips.enabled": false,      // Tips を出さない
+  "workbench.startupEditor": "none",    // Welcome ページを出さない
+
+  // ---- 画面の飾りを消す ----
+  "workbench.activityBar.location": "hidden",
+  "workbench.statusBar.visible": false,
+  "workbench.layoutControl.enabled": false,
+  "window.commandCenter": false,
+  "editor.minimap.enabled": false,
+  "breadcrumbs.enabled": false,
+
+  // ---- AI 系 UI（Copilot Chat など）を消す ----
+  "chat.disableAIFeatures": true,
+
+  // ---- Markdown ----
+  "markdown-preview-enhanced.previewTheme": "github-light.css"
+}
