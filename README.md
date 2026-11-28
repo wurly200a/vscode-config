@@ -21,6 +21,7 @@ profiles/<name>/          ← このリポジトリ（Git 管理）
   settings.json
   keybindings.json        （任意）
   extensions.txt          （任意）
+  profile.conf            （任意）ランチャの起動オプション
 
 <BASE>/<name>/            ← 各マシンのデータ（Git 管理外）
   data/User/settings.json     → profiles/<name>/settings.json へのリンク
@@ -99,6 +100,18 @@ code-viewer plan.md
 ファイルが外部（AI など）で更新されるとプレビューも追従する。
 
 - ソースを見たいとき … コマンドパレット（`Ctrl+Shift+P`）→「View: Reopen Editor With...」→「Text Editor」
+- プレビュー内のリンクから開いた `.md` もプレビューで開く（`previewMode: Previews Only`）。
+
+#### 画像とフォルダ
+
+Markdown Preview Enhanced のプレビューが読めるのは、**ワークスペースのフォルダ**と**その md のディレクトリ**の中だけ。
+ファイル単体で開くと、`../images/a.png` のような親ディレクトリの画像や、`/docs/a.png` のようなルート起点の画像は表示されない。
+
+- `code-viewer <file>` は、ファイルの Git リポジトリのルート（Git 管理外ならファイルのディレクトリ）を
+  フォルダとして一緒に開く（`profiles/viewer/profile.conf` の `OPEN_FILE_ROOT=1`）。
+  左にエクスプローラが出たら `Ctrl+B` で閉じる（状態は覚えられる）。
+- GUI から開くときは「File → Open File...」ではなく、**「File → Open Folder...」でリポジトリを開いてから**
+  エクスプローラ（`Ctrl+Shift+E`）や `Ctrl+P` で md を開く。空のウィンドウで md だけを開くと画像が欠ける。
 
 #### 初回のみ: 自分のフォルダを「信頼済み」に登録する（マシンごと）
 
@@ -161,3 +174,4 @@ cp -r profiles/viewer profiles/<name>
 ## 未対応
 
 - WSL 内のファイルを Windows 側の `code-<name>` で開く連携（Remote - WSL と専用データディレクトリの組み合わせ）は未整備。
+- `profile.conf`（`OPEN_FILE_ROOT` など）は Linux / macOS のランチャだけが読む。Windows の `code-<name>.cmd` は引数をそのまま渡す。

@@ -6,6 +6,10 @@
 #
 # 用途ごとに --user-data-dir / --extensions-dir を分けるので、
 # 設定・拡張・ウィンドウ状態は互いに干渉しない。
+#
+# 用途ごとの起動オプションは profiles/<name>/profile.conf（シェル変数）に書く:
+#   OPEN_FILE_ROOT=1   ファイルだけを渡されたとき、そのファイルの Git リポジトリの
+#                      ルート（Git 管理外ならファイルのディレクトリ）をフォルダとして一緒に開く
 set -e
 
 name=$(basename "$0")
@@ -24,6 +28,38 @@ esac
 if [ ! -d "$base/$name" ]; then
   echo "profile '$name' is not installed (run install.sh $name)" >&2
   exit 1
+fi
+
+# このスクリプトの実体（リポジトリ内）から profile.conf を探す
+self=$0
+while [ -L "$self" ]; do
+  link=$(readlink "$self")
+  case "$link" in
+    /*) self=$link ;;
+    *)  self=$(dirname "$self")/$link ;;
+  esac
+done
+repo=$(cd "$(dirname "$self")/.." && pwd)
+
+OPEN_FILE_ROOT=0
+[ -f "$repo/profiles/$name/profile.conf" ] && . "$repo/profiles/$name/profile.conf"
+
+if [ "$OPEN_FILE_ROOT" = "1" ]; then
+  # 引数にディレクトリが無く、ファイルがあるときだけ、最初のファイルのルートを先頭に足す
+  root=""
+  has_dir=0
+  for a in "$@"; do
+    case "$a" in -*) continue ;; esac
+    if [ -d "$a" ]; then
+      has_dir=1
+    elif [ -f "$a" ] && [ -z "$root" ]; then
+      dir=$(cd "$(dirname "$a")" && pwd)
+      root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null || echo "$dir")
+    fi
+  done
+  if [ "$has_dir" = "0" ] && [ -n "$root" ]; then
+    set -- "$root" "$@"
+  fi
 fi
 
 exec code --user-data-dir "$base/$name/data" --extensions-dir "$base/$name/extensions" "$@"

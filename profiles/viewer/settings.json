@@ -39,5 +39,8 @@
   // （ソースを見るときは「Reopen Editor With...」→「Text Editor」）
   "workbench.editorAssociations": {
     "*.md": "markdown-preview-enhanced"
-  }
+  },
+  // プレビュー内のリンクで開いた .md もプレビューで開く（既定の Single Preview だとソースで開く）
+  // 変更後は VS Code の再起動が要る
+  "markdown-preview-enhanced.previewMode": "Previews Only"
 }
